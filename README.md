@@ -18,6 +18,13 @@ To start the pyrs demo, run:
 python pyrs.py
 ```
 
+#### Commands:
+
+- `p`: save rgb and depth image
+- `c`: change camera presets
+- `i`: save camera intrinsics
+- `q`: quit loop
+
 ### Code:
 
 The recommended way is to use `with` statement and run a loop for each frames:
@@ -50,13 +57,6 @@ while True:
   pyrs.update_frames()
   ...
 ```
-
-### Commands:
-
-- `p`: save rgb and depth image
-- `c`: change camera presets
-- `i`: save camera intrinsics
-- `q`: quit loop
 
 
 ## Samples:
