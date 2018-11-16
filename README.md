@@ -72,3 +72,8 @@ while True:
 (Filtered and upsampled with nearest neighbor interpolation)
 
 ![image](sample_images/depth.png)
+
+## TODO:
+
+- [ ] Make it possible to use multiple realsense device (device selection)
+- [ ] Customizable filter
