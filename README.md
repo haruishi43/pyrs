@@ -30,8 +30,6 @@ python pyrs.py
 The recommended way is to use `with` statement and run a loop for each frames:
 
 ``` Python
-import PyRS
-
 with PyRS() as pyrs:
   while True:
     # Wait for a coherent pair of frames: depth and color
@@ -49,8 +47,6 @@ with PyRS() as pyrs:
 But you can also use it normally by creating an instance:
 
 ```Python
-import PyRS
-
 pyrs = PyRS()
 
 while True:
