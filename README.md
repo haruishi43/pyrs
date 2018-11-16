@@ -18,7 +18,7 @@ To start the pyrs demo, run:
 python pyrs.py
 ```
 
-### Code
+### Code:
 
 The recommended way is to use `with` statement and run a loop for each frames:
 
