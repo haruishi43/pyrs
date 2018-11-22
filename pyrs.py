@@ -93,6 +93,7 @@ class PyRS:
         if self.depths_on:
             self.__initialize_depths_sensor()
             self.set_depths_preset(self._preset)
+            self._scale = self.get_depth_scale()*1000.0
             
     ## Depths sensor settings:
     
@@ -125,28 +126,27 @@ class PyRS:
         '''Updates frames to pipeline (same as calling `_pipeline.wait_for_frames()`)'''
         frames = self._pipeline.wait_for_frames()
 
-        # Align depths with rgb
         frames = self.align.process(frames)
-
         color_frame = frames.get_color_frame()
         self._color_image = np.asanyarray(color_frame.get_data())
+
         if self.depths_on:
             self.depths_frame = frames.get_depth_frame()
-	    
-
             #self.depths_frame = self._filter(self.depths_frame)
-            print('depth_scale is:', self.get_depth_scale())
             # self._depths_image = depths_frame.get_data()
             # print(type(self._depths_image))
             self._depths_image = np.asanyarray(self.depths_frame.get_data())
-            self._depths_image = cv2.resize(self._depths_image, (self._color_image.shape[1], self._color_image.shape[0]), interpolation=self.interpolation)
+
+            # change scale to millimeters
+            self._depths_image = self._scale * self._depths_image.astype(np.float64)
+            self._depths_image = cv2.resize(self._depths_image.astype(np.uint16), (self._color_image.shape[1], self._color_image.shape[0]), interpolation=self.interpolation)
 
     def get_color_image(self):
         '''Returns color image as Numpy array'''
         return self._color_image
     
     def get_depths_frame(self):
-        '''Returns depth image as Numpy array'''
+        '''Returns depth image as Numpy array (in meters)'''
         return self._depths_image
 
     def get_colorized_depths_frame(self):
@@ -158,6 +158,7 @@ class PyRS:
         '''Create filter'''
         frame = self.decimation.process(frame)
         frame = self.depths_to_disparity.process(frame)
+        frame = self.spatial.process(frame)
         frame = self.temporal.process(frame)
         frame = self.disparity_to_depth.process(frame)
         return frame
@@ -169,7 +170,7 @@ class PyRS:
         assert self._context, "Has not started pipeline yet"
         if self.intrinsic is None:
             print("Getting Intrinsics for Camera...")
-            profile = self._context.get_stream(rs.stream.depth)
+            profile = self._context.get_stream(rs.stream.color)
             self.intrinsic = profile.as_video_stream_profile().get_intrinsics()
         intrinsic = self._intrinsic2dict(self.intrinsic)  # dict
         if as_json:
@@ -185,7 +186,7 @@ class PyRS:
     def _intrinsic2dict(self, i):
         mat = [i.fx, 0, 0, 0, i.fy, 0, i.ppx, i.ppy, 1]
         return {'width': i.width, 'height': i.height, 'intrinsic_matrix': mat}
-        
+
 
 if __name__ == '__main__':
 
