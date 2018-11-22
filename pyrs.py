@@ -132,7 +132,7 @@ class PyRS:
 
         if self.depths_on:
             self.depths_frame = frames.get_depth_frame()
-            #self.depths_frame = self._filter(self.depths_frame)
+            self.depths_frame = self._filter(self.depths_frame)
             # self._depths_image = depths_frame.get_data()
             # print(type(self._depths_image))
             self._depths_image = np.asanyarray(self.depths_frame.get_data())
