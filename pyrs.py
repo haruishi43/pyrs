@@ -192,6 +192,8 @@ class PyRS:
         # only obtain intrinsics once...
         if self._intrinsic is None:
             print("Getting Intrinsics for Camera...")
+            
+            # Depth image is aligned to color, therefore get the intrinsics for color sensor
             profile = self._context.get_stream(rs.stream.color)
             self._intrinsic = profile.as_video_stream_profile().get_intrinsics()
 
