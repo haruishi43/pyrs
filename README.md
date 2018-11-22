@@ -8,6 +8,13 @@
 - librealsense2 ([pyrealsense2](https://github.com/IntelRealSense/librealsense/tree/master/wrappers/python))
 - numpy
 
+### Hardware:
+
+Tested on:
+
+- D415 / D435
+- SR300
+
 ## Usage:
 
 ### Demo:
@@ -37,8 +44,8 @@ with PyRS() as pyrs:
 
     # Get images as numpy arrays
     color_image = pyrs.get_color_image()  # RGB
-    depths_image = pyrs.get_depths_frame()  # Depth
-    colorized_depths = pyrs.get_colorized_depths_frame()  # Colorized Depth (for rendering)
+    depths_image = pyrs.get_depth_frame()  # Depth
+    colorized_depths = pyrs.get_colorized_depth_frame()  # Colorized Depth (for rendering)
 
     # do something with the frame
     ...
@@ -53,7 +60,6 @@ while True:
   pyrs.update_frames()
   ...
 ```
-
 
 ## Samples:
 
