@@ -59,7 +59,7 @@ class PyRS:
             self.temporal = rs.temporal_filter()
 
             self.disparity_to_depth = rs.disparity_transform(False)
-        
+            
         print("Initialized RealSense Camera\nw: {}, h: {}, depths: {}, frame_rate: {}".format(w, h, depths, frame_rate))
 
     def __del__(self):
@@ -104,6 +104,10 @@ class PyRS:
         '''Return depths sensor\'s preset name form index'''
         return self._depths_sensor.get_option_value_description(rs.option.visual_preset, index)
     
+    def get_depth_scale(self):
+        '''Get depth scale'''
+        return self._depths_sensor.get_depth_scale()
+    
     def get_depths_visual_preset_max_range(self):
         '''Returns the depths sensor's visual preset range in Int'''
         assert self.depths_on, 'Error: Depths Sensor was not enabled at initialization (turn `depths` to `True`)'
@@ -128,9 +132,10 @@ class PyRS:
         self._color_image = np.asanyarray(color_frame.get_data())
         if self.depths_on:
             self.depths_frame = frames.get_depth_frame()
+	    
 
-            self.depths_frame = self._filter(self.depths_frame)
-
+            #self.depths_frame = self._filter(self.depths_frame)
+            print('depth_scale is:', self.get_depth_scale())
             # self._depths_image = depths_frame.get_data()
             # print(type(self._depths_image))
             self._depths_image = np.asanyarray(self.depths_frame.get_data())
@@ -153,7 +158,6 @@ class PyRS:
         '''Create filter'''
         frame = self.decimation.process(frame)
         frame = self.depths_to_disparity.process(frame)
-        frame = self.spatial.process(frame)
         frame = self.temporal.process(frame)
         frame = self.disparity_to_depth.process(frame)
         return frame
@@ -185,8 +189,8 @@ class PyRS:
 
 if __name__ == '__main__':
 
-    height = 720
-    width = 1280
+    height = 480
+    width = 640
 
     rgb_name = "rgb.png"
     depth_name = "depth.png"
