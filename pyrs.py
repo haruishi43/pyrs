@@ -19,6 +19,8 @@ class PyRS:
 
         Note: In this class, variables should not be directly changed.
         '''
+        self.width = w
+        self.height = h
         self.depth_on = depth
         self._pipeline = rs.pipeline()
         self._config = rs.config()
@@ -152,7 +154,7 @@ class PyRS:
             self._depth_image = (self._scale * self._depth_image.astype(np.float64)).astype(np.uint16)
 
             # resize depth image to match color image size
-            self._depth_image = cv2.resize(self._depth_image, (self._color_image.shape[1], self._color_image.shape[0]), interpolation=self.interpolation)
+            self._depth_image = cv2.resize(self._depth_image, (self.width, self.height), interpolation=self.interpolation)
         
         # get color frame
         color_frame = frames.get_color_frame()
@@ -172,7 +174,7 @@ class PyRS:
     def get_colorized_depth_frame(self):
         '''Colorize the depth data for rendering'''
         colorized_depth = np.asanyarray(self.colorizer.colorize(self.depth_frame).get_data())
-        return cv2.resize(colorized_depth, (self._color_image.shape[1], self._color_image.shape[0]), interpolation=self.interpolation) 
+        return cv2.resize(colorized_depth, (self.width, self.height), interpolation=self.interpolation) 
 
     def _filter(self, frame):
         '''Filter depth frame'''
@@ -253,7 +255,7 @@ if __name__ == '__main__':
             images = np.hstack((color_image, colorized_depth))
 
             font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(images, preset_name, (60,80), font, 4,(255,255,255),2, cv2.LINE_AA)
+            cv2.putText(images, preset_name, (60,80), font, 4, (255,255,255), 2, cv2.LINE_AA)
 
             # Show images
             cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
